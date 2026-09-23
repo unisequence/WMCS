@@ -1,0 +1,41 @@
+name: Compatibility report
+description: Report WMCS behavior on a device or OpenWrt release
+title: "compatibility: "
+labels:
+  - compatibility
+body:
+  - type: input
+    id: wmcs
+    attributes:
+      label: WMCS release or commit
+      placeholder: 0.1.0-alpha
+    validations:
+      required: true
+  - type: input
+    id: openwrt
+    attributes:
+      label: OpenWrt version, target and subtarget
+      placeholder: 25.12.5, mediatek/filogic
+    validations:
+      required: true
+  - type: input
+    id: hardware
+    attributes:
+      label: Device, role, RAM and CPU
+      placeholder: Model, controller or agent, memory and cores
+    validations:
+      required: true
+  - type: textarea
+    id: tested
+    attributes:
+      label: Features tested
+      description: List the operations actually exercised.
+    validations:
+      required: true
+  - type: textarea
+    id: result
+    attributes:
+      label: Result and sanitized diagnostics
+      description: Do not attach complete configs, credentials or raw captures.
+    validations:
+      required: true

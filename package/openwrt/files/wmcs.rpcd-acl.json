@@ -1,0 +1,37 @@
+{
+	"wmcs": {
+		"description": "Grant bounded read and administrative access to the WMCS daemon",
+		"read": {
+			"ubus": {
+				"wmcs": [
+					"status",
+					"roaming_status",
+					"capabilities",
+					"nodes",
+					"identity",
+					"peers",
+					"pairing_status",
+					"wlan_sync_status",
+					"release_status"
+				]
+			}
+		},
+		"write": {
+			"ubus": {
+				"wmcs": [
+					"discovery_start",
+					"discovery_stop",
+					"pairing_start",
+					"pairing_confirm",
+					"pairing_stop",
+					"control_listen",
+					"wlan_sync_start",
+					"wlan_sync_stop",
+					"release_start",
+					"release_stop",
+					"forget_orphan"
+				]
+			}
+		}
+	}
+}

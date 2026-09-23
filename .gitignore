@@ -1,0 +1,33 @@
+# Build output
+/build/
+/dist/
+/target/
+**/out/
+
+# Sensitive lab material must remain outside Git
+/backups/
+/captures/
+/lab-private/
+/research/raw/
+*.cap
+*.pcap
+*.pcapng
+*.img
+*.trx
+*.ubi
+*.uImage
+
+# Secrets and local environment
+.env
+.env.*
+*.key
+*.pem
+*.p12
+*.pfx
+
+# Editor and OS state
+*~
+*.swp
+.DS_Store
+__pycache__/
+*.pyc

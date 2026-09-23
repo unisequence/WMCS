@@ -1,0 +1,13 @@
+{
+	"admin/network/wmcs": {
+		"title": "WMCS",
+		"order": 80,
+		"action": {
+			"type": "view",
+			"path": "wmcs/overview"
+		},
+		"depends": {
+			"acl": [ "luci-app-wmcs" ]
+		}
+	}
+}

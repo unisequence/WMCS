@@ -1,0 +1,24 @@
+{
+	"luci-app-wmcs": {
+		"description": "Grant access to the WMCS configuration page",
+		"read": {
+			"uci": [ "wmcs" ],
+			"ubus": {
+				"wmcs": [
+					"status",
+					"roaming_status",
+					"capabilities",
+					"nodes",
+					"identity",
+					"peers",
+					"pairing_status",
+					"wlan_sync_status",
+					"release_status"
+				]
+			}
+		},
+		"write": {
+			"uci": [ "wmcs" ]
+		}
+	}
+}

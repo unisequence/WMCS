@@ -1,0 +1,90 @@
+#!/bin/sh /etc/rc.common
+
+START=95
+STOP=10
+USE_PROCD=1
+
+PROG=/usr/sbin/wmcsd
+
+start_service() {
+	local enabled role discovery_interface mutation_enabled
+	local home_source_iface home_source_radio home_target_radio uci_name
+	local source_trigger_dbm roaming_enabled
+
+	config_load wmcs
+	config_get_bool enabled core enabled 0
+	config_get role core role standalone
+	config_get discovery_interface core discovery_interface br-lan
+	config_get_bool mutation_enabled core mutation_enabled 0
+	config_get home_source_iface core home_source_iface default_radio1
+	config_get home_source_radio core home_source_radio radio1
+	config_get home_target_radio core home_target_radio radio1
+	config_get source_trigger_dbm policy source_trigger_dbm -68
+	config_get_bool roaming_enabled policy enabled 0
+
+	[ "$enabled" -eq 1 ] || return 0
+
+	# A sysupgrade backup can restore existing directories without their
+	# private mode. Re-assert the protected state boundary before procd starts
+	# the daemon; the daemon still validates ownership and rejects symlinks.
+	if [ -d /etc/wmcs ]; then
+		chmod 0700 /etc/wmcs || return 1
+	fi
+	if [ -d /etc/wmcs/peers ]; then
+		chmod 0700 /etc/wmcs/peers || return 1
+	fi
+
+	case "$role" in
+		standalone|controller|agent) ;;
+		*)
+			echo "wmcsd: invalid role in /etc/config/wmcs: $role" >&2
+			return 1
+			;;
+	esac
+
+	case "$discovery_interface" in
+		''|*[!A-Za-z0-9._-]*)
+			echo "wmcsd: invalid discovery interface: $discovery_interface" >&2
+			return 1
+			;;
+	esac
+
+	for uci_name in "$home_source_iface" "$home_source_radio" "$home_target_radio"; do
+		case "$uci_name" in
+			''|*[!A-Za-z0-9_]*)
+				echo "wmcsd: invalid configured UCI section name" >&2
+				return 1
+				;;
+		esac
+	done
+
+	case "$source_trigger_dbm" in
+		-[0-9]|-[0-9][0-9]|-[0-9][0-9][0-9]) ;;
+		*)
+			echo "wmcsd: invalid roaming source trigger: $source_trigger_dbm" >&2
+			return 1
+			;;
+	esac
+	if [ "$source_trigger_dbm" -lt -95 ] || [ "$source_trigger_dbm" -gt -50 ]; then
+		echo "wmcsd: roaming source trigger must be between -95 and -50 dBm" >&2
+		return 1
+	fi
+
+	procd_open_instance
+	procd_set_param command "$PROG" --role "$role" --interface "$discovery_interface" \
+		--home-source-iface "$home_source_iface" \
+		--home-source-radio "$home_source_radio" \
+		--home-target-radio "$home_target_radio" \
+		--roaming-source-trigger-dbm "$source_trigger_dbm"
+	[ "$mutation_enabled" -eq 1 ] && procd_append_param command --mutation-enabled
+	[ "$roaming_enabled" -eq 1 ] && procd_append_param command --roaming-enabled
+	procd_set_param respawn 3600 5 5
+	procd_set_param stdout 1
+	procd_set_param stderr 1
+	procd_set_param limits core="0 0"
+	procd_close_instance
+}
+
+service_triggers() {
+	procd_add_reload_trigger wmcs
+}

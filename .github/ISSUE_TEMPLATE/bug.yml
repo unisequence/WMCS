@@ -1,0 +1,43 @@
+name: Bug report
+description: Report a reproducible WMCS problem
+title: "bug: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Remove passwords, WLAN keys, private keys, tokens, public IPs and raw captures before posting.
+  - type: input
+    id: wmcs
+    attributes:
+      label: WMCS release or commit
+      placeholder: 0.1.0-alpha or commit SHA
+    validations:
+      required: true
+  - type: input
+    id: openwrt
+    attributes:
+      label: OpenWrt version and target
+      placeholder: 25.12.5, mediatek/filogic
+    validations:
+      required: true
+  - type: input
+    id: hardware
+    attributes:
+      label: Device, role and RAM
+      placeholder: Cudy TR3000 v1, agent, 256 MiB
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: What did you do, what happened, and what did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Sanitized diagnostics
+      description: Include relevant ubus or log output with secrets removed.

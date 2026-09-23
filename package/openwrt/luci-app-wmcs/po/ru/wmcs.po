@@ -1,0 +1,309 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: luci-app-wmcs\n"
+"PO-Revision-Date: 2026-09-21 00:00+0300\n"
+"Last-Translator: WMCS contributors\n"
+"Language-Team: Russian\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+msgid "%s ago"
+msgstr "%s назад"
+
+msgid "A bounded coordination layer for participating access points."
+msgstr "Ограниченный слой координации для участвующих точек доступа."
+
+msgid "Active"
+msgstr "Активен"
+
+msgid "Active controllers"
+msgstr "Активные контроллеры"
+
+msgid "Address"
+msgstr "Адрес"
+
+msgid "Advisory requests"
+msgstr "Рекомендательные запросы"
+
+msgid "Agent"
+msgstr "Агент"
+
+msgid "Authenticated control"
+msgstr "Аутентифицированное управление"
+
+msgid "Configuration"
+msgstr "Конфигурация"
+
+msgid "Control active"
+msgstr "Управление активно"
+
+msgid "Control operation"
+msgstr "Операция управления"
+
+msgid "Control plane"
+msgstr "Контур управления"
+
+msgid "Control plane, capabilities and counters"
+msgstr "Контур управления, возможности и счётчики"
+
+msgid "Control state"
+msgstr "Состояние управления"
+
+msgid "Controller"
+msgstr "Контроллер"
+
+msgid "Controller and agent roles enable the native WMCS protocol."
+msgstr "Роли контроллера и агента включают нативный протокол WMCS."
+
+msgid "Controls whether the init script starts the daemon."
+msgstr "Определяет, запускается ли демон init-службой."
+
+msgid "Current state"
+msgstr "Текущее состояние"
+
+msgid "Daemon"
+msgstr "Демон"
+
+msgid "Daemon and node"
+msgstr "Демон и узел"
+
+msgid "Daemon version"
+msgstr "Версия демона"
+
+msgid "Degraded"
+msgstr "Ограниченный режим"
+
+msgid "Degraded reason"
+msgstr "Причина ограниченного режима"
+
+msgid "Diagnostics"
+msgstr "Диагностика"
+
+msgid "Discovered nodes"
+msgstr "Обнаруженные узлы"
+
+msgid "Discovery"
+msgstr "Обнаружение"
+
+msgid "Discovery active"
+msgstr "Обнаружение активно"
+
+msgid "Discovery interface"
+msgstr "Интерфейс обнаружения"
+
+msgid "Enable WMCS daemon"
+msgstr "Включить демон WMCS"
+
+msgid "Enable advisory steering"
+msgstr "Включить рекомендательное переключение"
+
+msgid "Enable configuration mutation"
+msgstr "Разрешить изменение конфигурации"
+
+msgid "Enabled by policy"
+msgstr "Разрешено политикой"
+
+msgid "Enables the source-gated 802.11v advisory path. It does not force disassociation."
+msgstr "Включает рекомендательный путь 802.11v с порогом исходной точки. Разрыв соединения не выполняется принудительно."
+
+msgid "Gate passes"
+msgstr "Прохождения порога"
+
+msgid "Generation"
+msgstr "Поколение"
+
+msgid "Home source interface"
+msgstr "Исходный домашний интерфейс"
+
+msgid "Home source radio"
+msgstr "Исходное домашнее радио"
+
+msgid "Home target radio"
+msgstr "Целевое домашнее радио"
+
+msgid "Identity fingerprint"
+msgstr "Отпечаток идентификатора"
+
+msgid "Identity ready"
+msgstr "Идентификатор готов"
+
+msgid "Keep disabled while observing or pairing. Enabling it allows the bounded control and release paths."
+msgstr "Оставляйте выключенным во время наблюдения и сопряжения. Включение разрешает ограниченные операции управления и освобождения."
+
+msgid "Last reason"
+msgstr "Последняя причина"
+
+msgid "Last seen"
+msgstr "Последний контакт"
+
+msgid "Last source signal"
+msgstr "Последний сигнал исходной точки"
+
+msgid "Local interface used for native controller and agent discovery."
+msgstr "Локальный интерфейс для нативного обнаружения контроллеров и агентов."
+
+msgid "Mode"
+msgstr "Режим"
+
+msgid "Mutation gate"
+msgstr "Разрешение на изменения"
+
+msgid "Mutation available"
+msgstr "Изменения доступны"
+
+msgid "Native coordination remains separate from OpenWrt wireless configuration."
+msgstr "Нативная координация отделена от конфигурации беспроводной сети OpenWrt."
+
+msgid "Native protocol"
+msgstr "Нативный протокол"
+
+msgid "Neighbor reports"
+msgstr "Отчёты о соседях"
+
+msgid "No"
+msgstr "Нет"
+
+msgid "No discovered nodes"
+msgstr "Обнаруженных узлов нет"
+
+msgid "No paired peers"
+msgstr "Связанных пиров нет"
+
+msgid "Node"
+msgstr "Узел"
+
+msgid "Node overview"
+msgstr "Обзор узла"
+
+msgid "Node role"
+msgstr "Роль узла"
+
+msgid "Observed clients"
+msgstr "Наблюдаемые клиенты"
+
+msgid "One-WLAN sync"
+msgstr "Синхронизация одной WLAN"
+
+msgid "Ownership-safe release"
+msgstr "Безопасное освобождение по владельцу"
+
+msgid "Paired peers"
+msgstr "Связанные пиры"
+
+msgid "Pairing"
+msgstr "Сопряжение"
+
+msgid "Pairing active"
+msgstr "Сопряжение активно"
+
+msgid "Pairing state"
+msgstr "Состояние сопряжения"
+
+msgid "Peer"
+msgstr "Пир"
+
+msgid "Read-only capabilities"
+msgstr "Возможности только для чтения"
+
+msgid "Reconciliation pending"
+msgstr "Ожидает сверки"
+
+msgid "Release operation"
+msgstr "Операция освобождения"
+
+msgid "Release reconciliation"
+msgstr "Сверка освобождения"
+
+msgid "Release state"
+msgstr "Состояние освобождения"
+
+msgid "Request failures"
+msgstr "Неудачные запросы"
+
+msgid "Roaming"
+msgstr "Роуминг"
+
+msgid "Roaming policy"
+msgstr "Политика роуминга"
+
+msgid "Roaming telemetry"
+msgstr "Телеметрия роуминга"
+
+msgid "Role"
+msgstr "Роль"
+
+msgid "Samples"
+msgstr "Выборки"
+
+msgid "Source threshold"
+msgstr "Порог исходного сигнала"
+
+msgid "Standalone"
+msgstr "Автономный"
+
+msgid "State"
+msgstr "Состояние"
+
+msgid "This policy is advisory only. The client remains in control of the final roam."
+msgstr "Эта политика только рекомендует переход; окончательное решение остаётся за клиентом."
+
+msgid "Transport"
+msgstr "Транспорт"
+
+msgid "Trigger input in dBm. More negative values mean a weaker source signal."
+msgstr "Входной порог в dBm. Чем более отрицательное значение, тем слабее исходный сигнал."
+
+msgid "Trust"
+msgstr "Доверие"
+
+msgid "UCI"
+msgstr "UCI"
+
+msgid "ubus connected"
+msgstr "ubus подключён"
+
+msgid "UCI wireless interface whose configuration is treated as the source."
+msgstr "Секция UCI беспроводной сети, которая считается исходной."
+
+msgid "Uptime"
+msgstr "Время работы"
+
+msgid "WLAN sync operation"
+msgstr "Операция синхронизации WLAN"
+
+msgid "WLAN sync reconciliation"
+msgstr "Сверка синхронизации WLAN"
+
+msgid "WLAN sync state"
+msgstr "Состояние синхронизации WLAN"
+
+msgid "WMCS"
+msgstr "WMCS"
+
+msgid "Weak source signal threshold"
+msgstr "Порог слабого исходного сигнала"
+
+msgid "Wireless mesh coordination"
+msgstr "Координация беспроводной сети"
+
+msgid "Yes"
+msgstr "Да"
+
+msgid "dBm"
+msgstr "dBm"
+
+msgid "hostapd"
+msgstr "hostapd"
+
+msgid "iw"
+msgstr "iw"
+
+msgid "ubus"
+msgstr "ubus"
+
+msgid "Grant access to the WMCS configuration page"
+msgstr "Предоставляет доступ к странице конфигурации WMCS"
