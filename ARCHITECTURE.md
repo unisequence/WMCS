@@ -64,11 +64,20 @@ must remain minimal and this temporary exception must be recorded.
 | Jobs and transaction generations | WMCS state and journal | Own |
 | Topology and health | Derived observation | Cache with bounded lifetime |
 | WLAN credentials | Native configuration | Read only when required; never return via status APIs |
+| Paired Neighbor Reports | Current hostapd BSS plus authenticated active peer reports | Opt-in runtime reconciliation; exact last-applied list journaled privately; foreign lists preserved |
 
 Generated OpenWrt sections must carry both `wmcs_managed=1` and a stable scope
 identifier. Automatic cleanup may remove only objects carrying the expected
 ownership and scope markers. Field-level ownership must be defined before an
 adapter can modify a pre-existing section.
+
+The experimental neighbor adapter never edits a pre-existing UCI wireless
+section. On an explicitly selected controller BSS it changes only hostapd
+runtime k/v flags and an ownership-checked Neighbor Report list. On an agent
+it additionally requires the exact managed BSS and cryptographic owner. The
+protected last-applied list lets restart recovery distinguish WMCS output
+from foreign runtime entries; a conflict pauses steering instead of guessing.
+See [neighbor sync](docs/protocol/NEIGHBOR_SYNC_V0.md).
 
 ## Desired and observed state
 

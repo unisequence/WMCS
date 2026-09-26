@@ -23,6 +23,8 @@ enum wmcs_control_message_type {
 	WMCS_CONTROL_WLAN_RESULT = 2,
 	WMCS_CONTROL_RELEASE_REQUEST = 3,
 	WMCS_CONTROL_RELEASE_RESULT = 4,
+	WMCS_CONTROL_NR_QUERY = 5,
+	WMCS_CONTROL_NR_REPLY = 6,
 };
 
 enum wmcs_control_encryption {

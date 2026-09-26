@@ -1,6 +1,7 @@
 # WMCS-EXP-0018 — native source-gated advisory loop
 
-Status: accepted pilot; production target scoring remains open
+Status: accepted historical pilot; follow-up daemon changes are unbuilt and
+unvalidated; production target scoring remains open
 
 ## Question
 
@@ -64,7 +65,10 @@ pilot, crossed the source threshold, applied the confirmation guard, and sent
 one accepted advisory BTM. The result supports the current non-disruptive
 source-gate path and its one-attempt protection.
 
-It is not yet a universal seamless-roaming claim. The current slice does not
-score a fresh target measurement, correlate the BTM response inside wmcsd, or
-exchange station observations through authenticated WMCS control. Those are
-the next implementation gates.
+It is not a universal seamless-roaming claim. This historical build did not
+score a fresh target measurement or correlate the BTM response inside `wmcsd`.
+Follow-up source now adds a bounded 802.11k Beacon Report path, a target margin,
+and daemon-owned BTM/measurement event handling. That code has not been built or
+validated on the routers. It still does not exchange station observations
+through authenticated WMCS control; this remains a local hostapd/client
+measurement path.

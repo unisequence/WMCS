@@ -57,6 +57,13 @@ static int roaming_status(struct ubus_context *ctx,
 	const struct wmcs_roaming *roaming;
 	char threshold[8];
 	char signal[8];
+	char margin[8];
+	char force_threshold[8];
+	char target_signal[8];
+	char target_margin[8];
+	char btm_status[4];
+	uint64_t target_age_ms;
+	uint64_t now;
 
 	(void)object;
 	(void)method;
@@ -65,28 +72,93 @@ static int roaming_status(struct ubus_context *ctx,
 	if (!active_runtime || !active_runtime->roaming)
 		return UBUS_STATUS_UNKNOWN_ERROR;
 	roaming = active_runtime->roaming;
+	now = wmcs_monotonic_ms();
 	snprintf(threshold, sizeof(threshold), "%d",
 		 roaming->source_trigger_dbm);
+	snprintf(margin, sizeof(margin), "%d",
+		 roaming->improvement_margin_db);
+	snprintf(force_threshold, sizeof(force_threshold), "%d",
+		 roaming->force_trigger_dbm);
 	blob_buf_init(&reply, 0);
 	blobmsg_add_u32(&reply, "api_version", WMCS_API_VERSION);
 	blobmsg_add_u64(&reply, "generation", current_generation());
-	blobmsg_add_string(&reply, "mode", "source_gate_advisory");
+	blobmsg_add_string(&reply, "mode", roaming->force_after_timeout ?
+			   "source_gate_advisory_with_opt_in_force" :
+			   "source_gate_advisory");
 	blobmsg_add_u8(&reply, "enabled", wmcs_roaming_enabled(roaming));
+	blobmsg_add_u8(&reply, "neighbor_sync_enabled",
+			roaming->neighbor_sync.enabled);
+	blobmsg_add_u8(&reply, "neighbor_sync_ready",
+			roaming->neighbor_sync.ready);
+	blobmsg_add_string(&reply, "neighbor_sync_state",
+			   roaming->neighbor_sync.reason);
+	blobmsg_add_u32(&reply, "authenticated_neighbor_count",
+			(uint32_t)roaming->neighbor_sync.fresh_peer_count);
+	blobmsg_add_u64(&reply, "neighbor_queries_sent",
+			roaming->neighbor_sync.queries_sent);
+	blobmsg_add_u64(&reply, "neighbor_replies_accepted",
+			roaming->neighbor_sync.replies_accepted);
+	blobmsg_add_u64(&reply, "neighbor_apply_failures",
+			roaming->neighbor_sync.apply_failures);
+	blobmsg_add_u8(&reply, "force_after_timeout",
+		roaming->force_after_timeout);
+	blobmsg_add_string(&reply, "force_trigger_dbm", force_threshold);
 	blobmsg_add_u8(&reply, "active", wmcs_roaming_active(roaming));
+	blobmsg_add_u8(&reply, "btm_response_monitor_active",
+			roaming->response_monitor_active);
+	blobmsg_add_u8(&reply, "beacon_measurement_pending",
+			roaming->survey.active && roaming->survey.pending);
 	blobmsg_add_string(&reply, "state",
 			   wmcs_roaming_state_name(wmcs_roaming_state(roaming)));
 	blobmsg_add_string(&reply, "source_trigger_dbm", threshold);
+	blobmsg_add_string(&reply, "improvement_margin_db", margin);
 	blobmsg_add_u32(&reply, "client_count", (uint32_t)roaming->client_count);
 	blobmsg_add_u64(&reply, "samples", roaming->samples);
 	blobmsg_add_u64(&reply, "gate_passes", roaming->gate_passes);
 	blobmsg_add_u64(&reply, "requests_sent", roaming->requests_sent);
 	blobmsg_add_u64(&reply, "request_failures", roaming->request_failures);
+	blobmsg_add_u64(&reply, "fallback_btm_sent",
+		roaming->fallback_btm_sent);
+	blobmsg_add_u64(&reply, "force_disconnects",
+		roaming->force_disconnects);
+	blobmsg_add_u64(&reply, "force_failures", roaming->force_failures);
+	blobmsg_add_u64(&reply, "beacon_requests_sent",
+			roaming->beacon_requests_sent);
+	blobmsg_add_u64(&reply, "beacon_request_failures",
+			roaming->beacon_request_failures);
+	blobmsg_add_u64(&reply, "beacon_reports_received",
+			roaming->beacon_reports_received);
+	blobmsg_add_u64(&reply, "beacon_report_timeouts",
+			roaming->beacon_report_timeouts);
+	blobmsg_add_u64(&reply, "btm_responses", roaming->btm_responses);
+	blobmsg_add_u64(&reply, "btm_accepted", roaming->btm_accepted);
+	blobmsg_add_u64(&reply, "btm_rejected", roaming->btm_rejected);
+	blobmsg_add_u64(&reply, "btm_response_timeouts",
+			roaming->btm_response_timeouts);
 	blobmsg_add_u32(&reply, "neighbor_count",
 			(uint32_t)roaming->neighbor_count);
+	blobmsg_add_u8(&reply, "neighbor_list_truncated",
+			roaming->neighbor_overflow);
 	if (roaming->last_signal_seen) {
 		snprintf(signal, sizeof(signal), "%d",
 			 roaming->last_source_signal_dbm);
 		blobmsg_add_string(&reply, "last_source_signal_dbm", signal);
+	}
+	if (roaming->last_target_seen) {
+		snprintf(target_signal, sizeof(target_signal), "%d",
+			 roaming->last_target_signal_dbm);
+		snprintf(target_margin, sizeof(target_margin), "%d",
+			 roaming->last_target_margin_db);
+		blobmsg_add_string(&reply, "last_target_signal_dbm", target_signal);
+		blobmsg_add_string(&reply, "last_target_margin_db", target_margin);
+		target_age_ms = now >= roaming->last_target_observed_ms ?
+				 now - roaming->last_target_observed_ms : 0;
+		blobmsg_add_u64(&reply, "last_target_age_ms", target_age_ms);
+	}
+	if (roaming->last_btm_status_seen) {
+		snprintf(btm_status, sizeof(btm_status), "%u",
+			 (unsigned int)roaming->last_btm_status_code);
+		blobmsg_add_string(&reply, "last_btm_status_code", btm_status);
 	}
 	blobmsg_add_string(&reply, "last_reason",
 			   wmcs_roaming_last_reason(roaming));
@@ -268,6 +340,8 @@ static int status(struct ubus_context *ctx, struct ubus_object *object,
 				   "transactional" : "observe_and_pair");
 	blobmsg_add_u8(&reply, "mutation_enabled",
 			 active_runtime && active_runtime->mutation_enabled);
+	blobmsg_add_u8(&reply, "neighbor_sync_enabled",
+			 active_runtime && active_runtime->neighbor_sync_enabled);
 	blobmsg_add_u8(&reply, "mutation_available",
 			 active_runtime && active_runtime->mutation_enabled &&
 			 !active_runtime->degraded);

@@ -53,7 +53,10 @@ if group.get("write") != {"uci": ["wmcs"]}:
 PY
 
 for token in "'require form'" "'require poll'" "rpc.declare" "form.Map('wmcs'" \
-	"roaming_status" "source_trigger_dbm" "poll.add" "wmcs-nodes" "wmcs-peers"; do
+	"roaming_status" "source_trigger_dbm" "improvement_margin_db" \
+	"neighbor_sync_enabled" "authenticated_neighbor_count" \
+	"force_after_timeout" "force_trigger_dbm" "fallback_btm_sent" \
+	"last_target_signal_dbm" "poll.add" "wmcs-nodes" "wmcs-peers"; do
 	if ! grep -Fq "$token" "$view"; then
 		echo "LuCI view is missing required surface: $token" >&2
 		exit 1
@@ -70,6 +73,10 @@ if [ ! -s "$translation" ] || ! grep -Fq 'Language: ru' "$translation" || \
 	! grep -Fq 'msgstr "Координация беспроводной сети"' "$translation"; then
 	echo "Russian LuCI translation catalog is missing or incomplete" >&2
 	exit 1
+fi
+
+if command -v msgfmt >/dev/null 2>&1; then
+	msgfmt -c -o /dev/null "$translation"
 fi
 
 if command -v node >/dev/null 2>&1; then

@@ -313,23 +313,113 @@ function updateRuntime(data, root) {
 
 function updateRoaming(roaming, root) {
 	const value = roaming || {};
+	const reasons = {
+		'beacon_measurement_busy': _('Waiting for the measurement slot'),
+		'beacon_measurement_pending': _('Waiting for an 802.11k report'),
+		'beacon_report_timeout': _('802.11k report timed out'),
+		'beacon_report_unavailable': _('No usable 802.11k report'),
+		'beacon_request_failed': _('802.11k request failed'),
+		'btm_request_failed': _('BTM request failed'),
+		'btm_request_sent': _('BTM recommendation sent'),
+		'btm_request_sent_without_measurement': _('BTM sent using the sole configured neighbor; no target signal measurement'),
+		'btm_response_accepted': _('Client accepted the BTM recommendation'),
+		'btm_response_monitor_unavailable': _('hostapd event subscription unavailable'),
+		'btm_response_pending': _('Waiting for the BTM response'),
+		'btm_response_rejected': _('Client rejected the BTM recommendation'),
+		'btm_response_timeout': _('BTM response timed out'),
+		'client_observation_failed': _('Could not read the client list'),
+		'client_without_beacon_measurement': _('Client does not support beacon measurements'),
+		'client_without_btm': _('Client does not support 802.11v BTM'),
+		'client_without_neighbor_report': _('Client does not support Neighbor Reports'),
+		'disabled_by_policy': _('Disabled by policy'),
+		'force_cooldown_active': _('Forced-disconnect cooldown is active'),
+		'force_cooldown_table_full': _('Forced-disconnect safety table is full'),
+		'force_disconnect_failed': _('Forced disassociation failed'),
+		'force_disconnect_sent': _('Forced disassociation sent'),
+		'force_safety_gate_closed': _('Forced-disconnect safety conditions are not met'),
+		'force_waiting_after_btm_timeout': _('Waiting before optional forced disassociation'),
+		'hostapd_unavailable': _('hostapd unavailable'),
+		'minimum_dwell': _('Waiting for minimum association time'),
+		'neighbor_list_too_large': _('Neighbor list exceeds the safety limit'),
+		'neighbor_observation_failed': _('Could not read the Neighbor Report list'),
+		'neighbor_sync_unavailable': _('Authenticated neighbor sync is unavailable'),
+		'neighbor_sync_changed': _('Neighbor list changed; steering paused'),
+		'neighbor_list_changed': _('Neighbor list changed; steering paused'),
+		'foreign_neighbor_conflict': _('Another service owns the Neighbor Report list'),
+		'no_fresh_peer': _('Waiting for a fresh paired AP report'),
+		'owned_ap_unavailable': _('WMCS-owned AP is unavailable'),
+		'socket_unavailable': _('Neighbor sync network socket is unavailable'),
+		'identity_unavailable': _('Paired identity is unavailable'),
+		'neighbor_state_invalid': _('Protected neighbor state is invalid'),
+		'neighbor_apply_failed': _('Neighbor list update failed'),
+		'neighbor_rollback_failed': _('Neighbor list rollback failed'),
+		'neighbor_rollback_conflict': _('Neighbor list changed during rollback'),
+		'duplicate_neighbor_bssid': _('Two peers claim the same AP address'),
+		'peer_query_failed': _('Could not query paired APs'),
+		'ready': _('Ready'),
+		'neighbor_unavailable': _('No configured neighbor candidates'),
+		'per_association_attempt_budget': _('Recommendation limit reached for this association'),
+		'signal_unavailable': _('Client signal is unavailable'),
+		'source_above_trigger': _('Source signal is above the trigger'),
+		'source_identity_unavailable': _('Could not verify the source AP identity'),
+		'source_trigger_confirming': _('Confirming weak source signal'),
+		'target_improvement_too_small': _('Target signal is not sufficiently stronger'),
+		'target_measurement_cooldown': _('Waiting before measuring targets again'),
+		'target_measurement_stale': _('Target measurement is stale'),
+		'target_measurement_invalid': _('Target measurement is invalid'),
+		'target_neighbor_changed': _('Target Neighbor Report changed'),
+		'starting': _('Starting')
+	};
 	const set = function(id, current) {
 		setText(id, current, root);
 	};
+	const reason = readValue(value, 'last_reason');
+	const configuredMargin = readValue(value, 'improvement_margin_db');
+	const targetMargin = readValue(value, 'last_target_margin_db');
+	const targetAge = readValue(value, 'last_target_age_ms');
 
 	set('wmcs-roaming-mode', readValue(value, 'mode'));
 	set('wmcs-roaming-enabled', yesNo(value.enabled));
+	set('wmcs-roaming-neighbor-sync', yesNo(value.neighbor_sync_enabled));
+	set('wmcs-roaming-neighbor-ready', yesNo(value.neighbor_sync_ready));
+	const syncReason = readValue(value, 'neighbor_sync_state');
+	set('wmcs-roaming-neighbor-state', reasons[syncReason] || syncReason);
+	set('wmcs-roaming-auth-neighbors', readValue(value, 'authenticated_neighbor_count'));
+	set('wmcs-roaming-force-enabled', yesNo(value.force_after_timeout));
+	set('wmcs-roaming-force-threshold', formatDbm(value.force_trigger_dbm));
 	set('wmcs-roaming-active', yesNo(value.active));
+	set('wmcs-roaming-response-monitor', yesNo(value.btm_response_monitor_active));
 	set('wmcs-roaming-state', readValue(value, 'state'));
 	set('wmcs-roaming-threshold', formatDbm(value.source_trigger_dbm));
+	set('wmcs-roaming-margin', configuredMargin === '-' ? '-' :
+		'%s %s'.format(configuredMargin, _('dB')));
 	set('wmcs-roaming-signal', formatDbm(value.last_source_signal_dbm));
+	set('wmcs-roaming-target-signal', formatDbm(value.last_target_signal_dbm));
+	set('wmcs-roaming-target-margin', targetMargin === '-' ? '-' :
+		'%s %s'.format(targetMargin, _('dB')));
+	set('wmcs-roaming-target-age', targetAge === '-' ? '-' :
+		'%s %s'.format(targetAge, _('ms')));
+	set('wmcs-roaming-beacon-pending', yesNo(value.beacon_measurement_pending));
 	set('wmcs-roaming-clients', readValue(value, 'client_count'));
 	set('wmcs-roaming-neighbors', readValue(value, 'neighbor_count'));
+	set('wmcs-roaming-neighbors-truncated', yesNo(value.neighbor_list_truncated));
 	set('wmcs-roaming-samples', readValue(value, 'samples'));
 	set('wmcs-roaming-gates', readValue(value, 'gate_passes'));
 	set('wmcs-roaming-requests', readValue(value, 'requests_sent'));
+	set('wmcs-roaming-fallback-requests', readValue(value, 'fallback_btm_sent'));
+	set('wmcs-roaming-force-disconnects', readValue(value, 'force_disconnects'));
+	set('wmcs-roaming-force-failures', readValue(value, 'force_failures'));
 	set('wmcs-roaming-failures', readValue(value, 'request_failures'));
-	set('wmcs-roaming-reason', readValue(value, 'last_reason'));
+	set('wmcs-roaming-beacon-requests', readValue(value, 'beacon_requests_sent'));
+	set('wmcs-roaming-beacon-failures', readValue(value, 'beacon_request_failures'));
+	set('wmcs-roaming-beacon-reports', readValue(value, 'beacon_reports_received'));
+	set('wmcs-roaming-beacon-timeouts', readValue(value, 'beacon_report_timeouts'));
+	set('wmcs-roaming-btm-responses', readValue(value, 'btm_responses'));
+	set('wmcs-roaming-btm-accepted', readValue(value, 'btm_accepted'));
+	set('wmcs-roaming-btm-rejected', readValue(value, 'btm_rejected'));
+	set('wmcs-roaming-btm-timeouts', readValue(value, 'btm_response_timeouts'));
+	set('wmcs-roaming-btm-status', readValue(value, 'last_btm_status_code'));
+	set('wmcs-roaming-reason', reasons[reason] || reason);
 }
 
 function loadRuntime() {
@@ -401,18 +491,41 @@ function addCoreOptions(section) {
 function addRoamingOptions(section) {
 	let option;
 
-	section.description = _('This policy is advisory only. The client remains in control of the final roam.');
+	section.description = _('WMCS normally suggests a roam with 802.11v. With one same-SSID configured neighbor, it may suggest that neighbor even without an 802.11k Beacon Report; a measured weak target is still rejected. Forced disassociation is a separate, disabled-by-default option.');
 
 	option = section.option(form.Flag, 'enabled', _('Enable advisory steering'));
 	option.default = '0';
 	option.rmempty = false;
-	option.description = _('Enables the source-gated 802.11v advisory path. It does not force disassociation.');
+	option.description = _('Enables source-gated 802.11v recommendations. Forced disassociation requires a separate switch.');
+
+	option = section.option(form.Flag, 'neighbor_sync_enabled', _('Synchronize paired AP neighbors'));
+	option.default = '0';
+	option.rmempty = false;
+	option.description = _('Opt in to encrypted Neighbor Report exchange and runtime 802.11k/v recovery after hostapd restarts. Requires full wpad on both APs. WMCS does not edit wireless UCI; foreign Neighbor Report lists block synchronization. This also operates while advisory steering is off.');
 
 	option = section.option(form.Value, 'source_trigger_dbm', _('Weak source signal threshold'));
 	option.datatype = 'range(-95,-50)';
 	option.default = '-68';
 	option.rmempty = false;
 	option.description = _('Trigger input in dBm. More negative values mean a weaker source signal.');
+
+	option = section.option(form.Value, 'improvement_margin_db', _('Minimum target advantage'));
+	option.datatype = 'range(1,20)';
+	option.default = '8';
+	option.rmempty = false;
+	option.description = _('Require the measured target signal to exceed the source by this many dB before suggesting a roam.');
+
+	option = section.option(form.Flag, 'force_after_timeout', _('Force disassociation after ignored BTM'));
+	option.default = '0';
+	option.rmempty = false;
+	option.description = _('Advanced: after an unanswered BTM and a further 10 seconds, disassociate only if the source is still very weak and the sole same-SSID neighbor is unchanged. This may interrupt traffic; it cannot guarantee a successful roam. One attempt per association, five-minute cooldown.');
+
+	option = section.option(form.Value, 'force_trigger_dbm', _('Forced-disassociation signal threshold'));
+	option.datatype = 'range(-95,-75)';
+	option.default = '-78';
+	option.rmempty = false;
+	option.depends('force_after_timeout', '1');
+	option.description = _('The source must be at or below this value and the advisory threshold. Applies only after an unanswered BTM.');
 }
 
 return view.extend({
@@ -459,12 +572,25 @@ return view.extend({
 				statusSection(_('Roaming'), [
 					infoRow(_('Mode'), '-', 'wmcs-roaming-mode'),
 					infoRow(_('Enabled by policy'), '-', 'wmcs-roaming-enabled'),
+					infoRow(_('Paired neighbor sync'), '-', 'wmcs-roaming-neighbor-sync'),
+					infoRow(_('Neighbor sync ready'), '-', 'wmcs-roaming-neighbor-ready'),
+					infoRow(_('Neighbor sync state'), '-', 'wmcs-roaming-neighbor-state'),
+					infoRow(_('Authenticated neighbors'), '-', 'wmcs-roaming-auth-neighbors'),
+					infoRow(_('Forced disassociation enabled'), '-', 'wmcs-roaming-force-enabled'),
+					infoRow(_('Forced-disassociation threshold'), '-', 'wmcs-roaming-force-threshold'),
 					infoRow(_('Active'), '-', 'wmcs-roaming-active'),
+					infoRow(_('BTM response monitoring'), '-', 'wmcs-roaming-response-monitor'),
 					infoRow(_('State'), '-', 'wmcs-roaming-state'),
 					infoRow(_('Source threshold'), '-', 'wmcs-roaming-threshold'),
+					infoRow(_('Minimum target advantage'), '-', 'wmcs-roaming-margin'),
 					infoRow(_('Last source signal'), '-', 'wmcs-roaming-signal'),
+					infoRow(_('Last target signal'), '-', 'wmcs-roaming-target-signal'),
+					infoRow(_('Measured target advantage'), '-', 'wmcs-roaming-target-margin'),
+					infoRow(_('Target measurement age'), '-', 'wmcs-roaming-target-age'),
+					infoRow(_('Beacon measurement pending'), '-', 'wmcs-roaming-beacon-pending'),
 					infoRow(_('Observed clients'), '-', 'wmcs-roaming-clients'),
 					infoRow(_('Neighbor reports'), '-', 'wmcs-roaming-neighbors'),
+					infoRow(_('Candidate list truncated'), '-', 'wmcs-roaming-neighbors-truncated'),
 					infoRow(_('Advisory requests'), '-', 'wmcs-roaming-requests'),
 					infoRow(_('Last reason'), '-', 'wmcs-roaming-reason')
 				])
@@ -508,7 +634,19 @@ return view.extend({
 				statusSection(_('Roaming telemetry'), [
 					infoRow(_('Samples'), '-', 'wmcs-roaming-samples'),
 					infoRow(_('Gate passes'), '-', 'wmcs-roaming-gates'),
+					infoRow(_('BTM sent without target measurement'), '-', 'wmcs-roaming-fallback-requests'),
+					infoRow(_('Forced disassociations'), '-', 'wmcs-roaming-force-disconnects'),
+					infoRow(_('Forced-disassociation failures'), '-', 'wmcs-roaming-force-failures'),
 					infoRow(_('Request failures'), '-', 'wmcs-roaming-failures'),
+					infoRow(_('Beacon requests'), '-', 'wmcs-roaming-beacon-requests'),
+					infoRow(_('Beacon request failures'), '-', 'wmcs-roaming-beacon-failures'),
+					infoRow(_('Beacon reports'), '-', 'wmcs-roaming-beacon-reports'),
+					infoRow(_('Beacon report timeouts'), '-', 'wmcs-roaming-beacon-timeouts'),
+					infoRow(_('BTM responses'), '-', 'wmcs-roaming-btm-responses'),
+					infoRow(_('BTM accepted'), '-', 'wmcs-roaming-btm-accepted'),
+					infoRow(_('BTM rejected'), '-', 'wmcs-roaming-btm-rejected'),
+					infoRow(_('BTM response timeouts'), '-', 'wmcs-roaming-btm-timeouts'),
+					infoRow(_('Last BTM status code'), '-', 'wmcs-roaming-btm-status'),
 					infoRow(_('Identity fingerprint'), '-', 'wmcs-status-fingerprint')
 				])
 			]),

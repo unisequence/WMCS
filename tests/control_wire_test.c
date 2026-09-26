@@ -105,6 +105,19 @@ int main(void)
 	expect(decoded.type == WMCS_CONTROL_RELEASE_RESULT,
 	       "release result packet type");
 
+	packet.type = WMCS_CONTROL_NR_QUERY;
+	expect(wmcs_control_encode(wire, &packet), "neighbor query packet encode");
+	expect(wmcs_control_decode(&decoded, wire, sizeof(wire)),
+	       "neighbor query packet decode");
+	expect(decoded.type == WMCS_CONTROL_NR_QUERY,
+	       "neighbor query packet type");
+	packet.type = WMCS_CONTROL_NR_REPLY;
+	expect(wmcs_control_encode(wire, &packet), "neighbor reply packet encode");
+	expect(wmcs_control_decode(&decoded, wire, sizeof(wire)),
+	       "neighbor reply packet decode");
+	expect(decoded.type == WMCS_CONTROL_NR_REPLY,
+	       "neighbor reply packet type");
+
 	if (failures)
 		return 1;
 	puts("Control wire codec tests: ok");

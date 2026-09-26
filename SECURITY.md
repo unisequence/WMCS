@@ -129,6 +129,29 @@ its apply/verify window. Freenetic must call only the documented ubus methods
 through an explicit least-privilege ACL; it must never receive the WLAN key from
 WMCS status or topology methods.
 
+## Experimental paired Neighbor Report channel
+
+The opt-in neighbor channel is separate from WLAN/release control. It is bound
+to the configured LAN interface and TTL-one multicast, accepts only an active
+paired opposite-role identity, and uses new query/reply HKDF domains over the
+same authenticated WMCX envelope. A fresh random challenge, a 15-second reply
+window, and one accepted response per peer/challenge prevent stale response
+replay without advancing the durable WLAN operation sequence. The payload
+contains only bounded SSID and own Neighbor Report data, never a WLAN key or
+station identifier. Hostapd reports from the peer are still assertions by a
+paired device, not independent proof of RF reachability or security parity.
+
+The controller BSS requires explicit opt-in; the agent additionally verifies
+that its BSS carries the matching WMCS owner marker. A private, atomically
+written `neighbor-sync.state` records only the exact hostapd list WMCS last
+applied and binds it to the local BSSID/SSID. WMCS refuses to overwrite a
+nonempty foreign list. A reply older than 30 seconds is removed from desired
+state; advisory steering stops whenever the current list is not the exact
+authenticated fresh set. This channel does not change wireless UCI or enable
+forced disassociation. The runtime hostapd enable API is one-way; disabling
+WMCS stops further writes but does not remove those flags until hostapd
+restarts. Live radio-restart and hostile-LAN fault tests remain a release gate.
+
 ## Privileged boundary
 
 The local ubus method surface separates read operations from explicit control
@@ -153,6 +176,11 @@ fault tests are required for each exposed decoder.
 - Build and signing are separate trust steps.
 - Packages carry provenance and are verified before installation.
 - WMCS has no embedded self-update or alternate trust path.
+
+The current two-router lab has installed locally built APKs with
+`--allow-untrusted` after checking exact SHA-256 hashes and package contents.
+That is a development-only exception, not a signed release or a supply-chain
+assurance claim.
 
 ## Reporting a vulnerability
 

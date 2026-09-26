@@ -81,6 +81,7 @@ static void ubus_connection_lost(struct ubus_context *ctx)
 	struct wmcs_ubus_lifecycle *lifecycle = container_of(
 		ctx, struct wmcs_ubus_lifecycle, context);
 
+	wmcs_roaming_ubus_disconnected(lifecycle->roaming);
 	schedule_ubus_reconnect(lifecycle, "ubus_disconnected");
 }
 
@@ -208,11 +209,51 @@ static bool roaming_trigger_valid(const char *value, int *parsed)
 	return true;
 }
 
+static bool roaming_margin_valid(const char *value, int *parsed)
+{
+	char *end = NULL;
+	long number;
+
+	if (!value || !*value)
+		return false;
+
+	errno = 0;
+	number = strtol(value, &end, 10);
+	if (errno == ERANGE || end == value || *end != '\0' ||
+	    number < 1 || number > 20)
+		return false;
+
+	if (parsed)
+		*parsed = (int)number;
+	return true;
+}
+
+static bool roaming_force_trigger_valid(const char *value, int *parsed)
+{
+	char *end = NULL;
+	long number;
+
+	if (!value || !*value)
+		return false;
+	errno = 0;
+	number = strtol(value, &end, 10);
+	if (errno == ERANGE || end == value || *end != '\0' ||
+	    number < -95 || number > -75)
+		return false;
+	if (parsed)
+		*parsed = (int)number;
+	return true;
+}
+
 static int parse_args(int argc, char **argv, const char **role,
 		      const char **interface, const char **state_dir,
 		      const char **source_iface, const char **source_radio,
 		      const char **target_radio, bool *mutation_enabled,
-		      bool *roaming_enabled, int *roaming_source_trigger_dbm)
+		      bool *roaming_enabled, int *roaming_source_trigger_dbm,
+		      int *roaming_improvement_margin_db,
+		      bool *neighbor_sync_enabled,
+		      bool *roaming_force_after_timeout,
+		      int *roaming_force_trigger_dbm)
 {
 	int i;
 
@@ -292,8 +333,39 @@ static int parse_args(int argc, char **argv, const char **role,
 			continue;
 		}
 
+		if (!strcmp(argv[i], "--roaming-improvement-margin-db")) {
+			if (++i >= argc ||
+			    !roaming_margin_valid(argv[i], roaming_improvement_margin_db)) {
+				fprintf(stderr,
+					"wmcsd: --roaming-improvement-margin-db requires a value from 1 to 20\n");
+				return -1;
+			}
+			continue;
+		}
+
 		if (!strcmp(argv[i], "--roaming-enabled")) {
 			*roaming_enabled = true;
+			continue;
+		}
+
+		if (!strcmp(argv[i], "--neighbor-sync-enabled")) {
+			*neighbor_sync_enabled = true;
+			continue;
+		}
+
+		if (!strcmp(argv[i], "--roaming-force-after-timeout")) {
+			*roaming_force_after_timeout = true;
+			continue;
+		}
+
+		if (!strcmp(argv[i], "--roaming-force-trigger-dbm")) {
+			if (++i >= argc ||
+			    !roaming_force_trigger_valid(argv[i],
+						 roaming_force_trigger_dbm)) {
+				fprintf(stderr,
+					"wmcsd: --roaming-force-trigger-dbm requires a value from -95 to -75\n");
+				return -1;
+			}
 			continue;
 		}
 
@@ -309,6 +381,8 @@ int main(int argc, char **argv)
 	struct wmcs_runtime runtime = {
 		.role = "standalone",
 		.roaming_source_trigger_dbm = -68,
+		.roaming_improvement_margin_db = 8,
+		.roaming_force_trigger_dbm = -78,
 	};
 	struct wmcs_discovery discovery;
 	struct wmcs_identity identity;
@@ -335,7 +409,11 @@ int main(int argc, char **argv)
 			    &source_iface, &source_radio, &target_radio,
 			    &runtime.mutation_enabled,
 			    &runtime.roaming_enabled,
-			    &runtime.roaming_source_trigger_dbm);
+		    &runtime.roaming_source_trigger_dbm,
+		    &runtime.roaming_improvement_margin_db,
+		    &runtime.neighbor_sync_enabled,
+		    &runtime.roaming_force_after_timeout,
+			    &runtime.roaming_force_trigger_dbm);
 	if (parsed)
 		return parsed < 0 ? 2 : 0;
 
@@ -371,9 +449,13 @@ int main(int argc, char **argv)
 	}
 	control_initialized = true;
 	runtime.control = &control;
-	if (wmcs_roaming_init(&roaming, runtime.role, source_iface,
-			      source_radio, ctx, runtime.roaming_enabled,
-			      runtime.roaming_source_trigger_dbm)) {
+	if (wmcs_roaming_init(&roaming, runtime.role, interface, source_iface,
+			      source_radio, &identity, ctx, runtime.roaming_enabled,
+			      runtime.neighbor_sync_enabled,
+			      runtime.roaming_source_trigger_dbm,
+			      runtime.roaming_improvement_margin_db,
+			      runtime.roaming_force_after_timeout,
+			      runtime.roaming_force_trigger_dbm)) {
 		fprintf(stderr, "wmcsd: cannot initialize roaming state\n");
 		goto out;
 	}

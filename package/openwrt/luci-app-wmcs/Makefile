@@ -10,8 +10,8 @@ PKG_NAME:=luci-app-wmcs
 LUCI_NAME:=luci-app-wmcs
 override LUCI_LANGUAGES:=ru
 PKG_VERSION:=0.2.0
-PKG_RELEASE:=4
-PKG_PO_VERSION:=0.2.0-r4
+PKG_RELEASE:=7
+PKG_PO_VERSION:=0.2.0-r7
 
 PKG_LICENSE:=Apache-2.0
 PKG_MAINTAINER:=WMCS contributors

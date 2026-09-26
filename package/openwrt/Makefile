@@ -4,7 +4,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=wmcsd
 PKG_VERSION:=0.2.0
-PKG_RELEASE:=5
+PKG_RELEASE:=10
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE
 PKG_MAINTAINER:=WMCS contributors
@@ -51,7 +51,10 @@ define Build/Compile
 		$(PKG_BUILD_DIR)/control.c $(PKG_BUILD_DIR)/control_crypto.c \
 		$(PKG_BUILD_DIR)/control_wire.c $(PKG_BUILD_DIR)/operation_store.c \
 		$(PKG_BUILD_DIR)/result_store.c \
-		$(PKG_BUILD_DIR)/roaming.c \
+		$(PKG_BUILD_DIR)/roaming.c $(PKG_BUILD_DIR)/roaming_event.c \
+		$(PKG_BUILD_DIR)/neighbor_sync.c \
+		$(PKG_BUILD_DIR)/neighbor_sync_wire.c \
+		$(PKG_BUILD_DIR)/neighbor_sync_store.c \
 		$(PKG_BUILD_DIR)/wlan.c \
 		$(TARGET_LDFLAGS) -Wl,-z,relro,-z,now -pie \
 		-lubus -lubox -luci -lmbedcrypto -o $(PKG_BUILD_DIR)/wmcsd

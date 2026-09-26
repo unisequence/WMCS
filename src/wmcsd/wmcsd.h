@@ -24,10 +24,14 @@ struct wmcs_runtime {
 	const char *role;
 	bool mutation_enabled;
 	bool roaming_enabled;
+	bool neighbor_sync_enabled;
+	bool roaming_force_after_timeout;
 	bool ubus_connected;
 	bool degraded;
 	char degraded_reason[48];
 	int roaming_source_trigger_dbm;
+	int roaming_improvement_margin_db;
+	int roaming_force_trigger_dbm;
 	uint64_t started_ms;
 	struct wmcs_control *control;
 	struct wmcs_roaming *roaming;

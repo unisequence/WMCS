@@ -17,11 +17,13 @@ MWS, EasyMesh, or 802.11s.
 
 A device may be built with either role, but a live exchange has one controller
 and one agent. Packet forwarding, bridging, DHCP, firewall, radio operation,
-and client roaming remain native OpenWrt responsibilities.
+and the final client roaming decision remain native OpenWrt responsibilities.
 
 All v0 network sockets are IPv4 UDP, bound to one configured interface, and
 exist only for an explicit 5..300 second operation. Discovery uses port
-`45123`, pairing `45124`, and authenticated control `45125`.
+`45123`, pairing `45124`, and authenticated control `45125`. The separate,
+opt-in experimental Neighbor Report sync uses `45126` continuously while
+enabled; it does not open a WLAN mutation window.
 
 ## Discovery
 
@@ -91,7 +93,7 @@ Control uses a fixed 256-byte `WMCX` frame:
 |---:|---:|---|
 | 0 | 4 | Magic `WMCX` |
 | 4 | 1 | Version `0` |
-| 5 | 1 | Type: `1` WLAN request, `2` WLAN result, `3` release request, `4` release result |
+| 5 | 1 | Type: `1` WLAN request, `2` WLAN result, `3` release request, `4` release result, `5` neighbor query, `6` neighbor reply |
 | 6 | 2 | Big-endian packet size, `256` |
 | 8 | 16 | Sender cryptographic identity ID |
 | 24 | 16 | Recipient cryptographic identity ID |
@@ -108,6 +110,11 @@ additional data and protects the 180-byte payload. Unknown versions, message
 types, sizes, algorithms, identities, reserved bytes, and out-of-state packets
 are rejected before privileged work. A cached result must match both sequence
 and operation-specific result type.
+
+Types 5 and 6 are carried only on the separate opt-in multicast sync socket,
+use `WMCS-NR-QUERY-TO-V0` and `WMCS-NR-REPLY-TO-V0` crypto domains, and do not
+consume the durable WLAN/release sequence. Their one-use random challenge is
+echoed inside the authenticated reply; see [neighbor sync](NEIGHBOR_SYNC_V0.md).
 
 The controller atomically stores the exact encrypted request before its first
 transmission, then retries that frame once per second until a result or

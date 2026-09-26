@@ -48,7 +48,9 @@ static bool packet_valid(const struct wmcs_control_packet *packet)
 	       (packet->type == WMCS_CONTROL_WLAN_REQUEST ||
 		packet->type == WMCS_CONTROL_WLAN_RESULT ||
 		packet->type == WMCS_CONTROL_RELEASE_REQUEST ||
-		packet->type == WMCS_CONTROL_RELEASE_RESULT) &&
+		packet->type == WMCS_CONTROL_RELEASE_RESULT ||
+		packet->type == WMCS_CONTROL_NR_QUERY ||
+		packet->type == WMCS_CONTROL_NR_REPLY) &&
 	       packet->sequence &&
 	       any_nonzero(packet->sender_id, sizeof(packet->sender_id)) &&
 	       any_nonzero(packet->recipient_id, sizeof(packet->recipient_id)) &&

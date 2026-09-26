@@ -645,16 +645,21 @@ The first alpha is done only when:
 1. [x] Approve the native OpenWrt controller-agent, Ethernet-only MVP.
 2. [x] Select Apache-2.0 and create `README.md`, `ARCHITECTURE.md`,
    `SECURITY.md` and `CONTRIBUTING.md` from this plan.
-3. [ ] Inventory available OpenWrt devices, firmware versions, UART and
-   switch/capture capabilities.
+3. [ ] Finish the lab inventory. The Globitel BT-RB300 controller and Cudy
+   TR3000 v1 agent and their firmware are recorded; an FTDI UART is attached
+   to the controller but recovery is unverified, the Cudy has no UART, and
+   controlled power interruption is unavailable. Verify switch mirroring and
+   capture paths before treating the hardware fault lab as ready.
 4. [x] Create the experiment template and compatibility matrix.
 5. [x] Establish storage outside Git for sensitive captures and backups.
 6. [x] Build an automated snapshot tool for UCI, ubus, link, neighbor, bridge,
    hostapd and process state.
-7. [ ] Define and capture the full idle-to-adoption corpus. Discovery,
-   successful/wrong-SAS identity pairing, dry-run, apply, rollback and reboot
-   are recorded in EXP-0003/0004/0005; pairing expiry, lost-result recovery,
-   release and repeated lifecycle hardware coverage remain.
+7. [ ] Complete the idle-to-adoption and recovery corpus. Discovery,
+   successful/wrong-SAS pairing, one-WLAN dry-run/apply/rollback and reboot
+   are recorded in EXP-0003..0005; exact-package sync, release/forget/re-pair,
+   ten normal lifecycle cycles, and process-restart reconciliation are in
+   EXP-0019..0022. Pairing expiry and exact physical power, flash-full, and
+   mid-UCI interruption boundaries remain untested.
 8. [x] Run an aarch64/mipsel ubus/footprint spike and record the provisional
    C-versus-Rust decision gate.
 9. [x] Draft ubus API v0 and the transport-independent simulator state machine.
@@ -669,12 +674,40 @@ The first alpha is done only when:
 14. [x] Freeze the native v0 authenticated control envelope and implement the
     transactional one-WLAN validate/apply/verify/commit-or-rollback path;
     validate it on the Globitel/Cudy pair in ADR 0006 and EXP-0005.
-15. [ ] Complete the lifecycle gate: durable agent-result and controller-
-    operation reconciliation plus ownership-safe release/local forget are
-    implemented in code; hardware power-cut validation and ten clean lifecycle
-    repetitions remain.
-16. [ ] Measure real client handoff between both wired APs before adding
-    802.11k/v assistance; evaluate 802.11r only as a separate opt-in step.
+15. [ ] Complete the lifecycle gate. Durable result/operation reconciliation
+    and ownership-safe release/local forget are implemented; ten normal
+    release/forget/re-pair/repair cycles passed (EXP-0021), and process
+    restart/reconciliation passed on the r3 controller/r4 agent pair (EXP-0022).
+    The r6 controller service restart ended healthy with two transient
+    parallel SSH resets (EXP-0024); the r6 agent restart was skipped. A
+    read-only 24-hour monitor started
+    2026-09-26T09:37:58Z with a healthy first sample, but has no completed
+    result. Physical power loss, router flash faults, and mid-UCI interruption
+    remain untested.
+16. [ ] Complete the wired-AP roaming gate. Baseline walks and accepted
+    advisory BTM behavior are recorded, and daemon-side 802.11k target scoring
+    plus event handling are now in source and cross-build successfully. In
+    EXP-0026 the Poco stayed associated to Cudy while physically by Globitel:
+    the automatic r6 policy timed out awaiting Beacon Reports and sent no BTM.
+    One manual advisory BTM then moved it to Globitel with two lost 100 ms
+    probes. The r7 policy adds a sole-neighbor advisory fallback and an
+    opt-in, disabled-by-default forced-disassociation path. In EXP-0029, one
+    automatic measured BTM in each direction moved the POCO to the intended
+    AP; the 180-second and 120-second probes lost 4/1789 and 5/1193 replies,
+    respectively. Cudy hostapd accepted the reverse request, but r7 WMCS
+    discarded its INT8 response attributes and counted a timeout. The r8
+    parser fix is host-tested, cross-built and deployed on both routers, but
+    has not yet been live-response tested. Both advisory policies remain off.
+    The opt-in paired Neighbor Report reconciler was exercised on both nodes
+    in EXP-0030: encrypted reciprocal reports, runtime-list restoration,
+    protected ownership state, daemon restart, peer expiry, and rejoin passed
+    without changing wireless UCI. The r10 raw-list pre-BTM guard and exact
+    package rollout are recorded in EXP-0031. A targeted BT 5 GHz radio
+    down/up recreated its hostapd AP object and restored reciprocal reports
+    without touching 2.4 GHz backhaul (EXP-0032). Cudy AP restart, global
+    hostapd process restart/reboot recovery, live Cudy INT8 response handling,
+    fallback safety and repeated quality trials remain. Evaluate 802.11r only
+    as a separate opt-in step.
 
 The first irreversible design commitment should be the local API contract, not
 an assumed wire format. Protocol knowledge will evolve; Freenetic and other

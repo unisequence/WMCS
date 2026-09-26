@@ -49,6 +49,21 @@ for domain in WMCS-RELEASE-C2A-V0 WMCS-RELEASE-A2C-V0; do
 	fi
 done
 
+for token in 'ubus_subscribe(roaming->ubus' 'rrm_beacon_req' \
+	'bss-transition-response' 'beacon-report' 'improvement_margin_db' \
+	'wmcs_roaming_target_decide' 'wmcs_roaming_force_gate' \
+	'force_cooldown_slot' '"del_client"'; do
+	if ! grep -q "$token" "$source_dir/roaming.c"; then
+		echo "Roaming adapter is missing bounded target-observation support: $token" >&2
+		exit 1
+	fi
+done
+
+if ! grep -Fq "option force_after_timeout '0'" package/openwrt/files/wmcs.config; then
+	echo "Forced disassociation must be disabled in the packaged default" >&2
+	exit 1
+fi
+
 for marker in wmcs_managed wmcs_owner; do
 	if ! grep -q "\"$marker\"" "$source_dir/wlan.c"; then
 		echo "Release must retain the ownership marker: $marker" >&2
@@ -93,6 +108,11 @@ for marker in wmcs_wlan_async_start_apply wmcs_wlan_async_start_release \
 		exit 1
 	fi
 done
+
+if ! grep -q 'observed_neighbor_records !=' "$source_dir/roaming.c"; then
+	echo "Steering must reject extra foreign hostapd neighbor records" >&2
+	exit 1
+fi
 
 for marker in ubus_connection_lost ubus_reconnect WMCS_UBUS_RECONNECT_MS; do
 	if ! grep -q "$marker" "$source_dir/main.c"; then

@@ -38,17 +38,48 @@ manual deployment. The Russian catalog is shipped as the companion
 ```text
 config roaming 'policy'
 	option enabled '0'
+	option neighbor_sync_enabled '0'
 	option source_trigger_dbm '-68'
+	option improvement_margin_db '8'
+	option force_after_timeout '0'
+	option force_trigger_dbm '-78'
 ```
 
-The accepted range is `-95` through `-50` dBm. The init wrapper validates the
-value and passes it to `wmcsd`. `enabled` remains `0` by default. When enabled,
-the experimental source-gate adapter polls the local hostapd station and
-Neighbor Report interfaces, requires five consecutive samples at or below the
-threshold plus a 20-second dwell, and may send one advisory 802.11v request.
-It never sets Disassociation Imminent, never deauthenticates, and never retries
-within the same association. Target signal scoring and response correlation
-remain a later capability.
+The source threshold range is `-95` through `-50` dBm. The target improvement
+margin range is `1` through `20` dB and defaults to `8` dB. The init wrapper
+validates the thresholds and passes them to `wmcsd`. `enabled` and
+`force_after_timeout` remain `0` by default. When roaming is enabled, the
+experimental source-gate adapter polls local hostapd station and Neighbor
+Report state and requires five consecutive weak samples plus a 20-second dwell.
+It requests bounded 802.11k Beacon Reports serially when the client supports
+them. A fresh report must show the target at least the configured margin
+stronger than the source. If no usable report arrives, WMCS may still send one
+advisory 802.11v BTM when exactly one locally published, same-SSID
+Neighbor Report remains; with multiple candidates it fails closed. A measured
+weak target is never treated as an unmeasured fallback. The BTM itself never
+sets Disassociation Imminent, and WMCS never retries BTM within an association.
+
+The separate `neighbor_sync_enabled` switch opts in to authenticated paired
+AP Neighbor Report exchange and hostapd runtime 802.11k/v recovery. It does
+not enable steering, forced disassociation, or a Wi-Fi UCI edit. The controller
+source AP is touched only after this explicit opt-in; the agent additionally
+requires the exact WMCS-owned AP and active controller marker. A protected
+last-applied-list record lets the daemon distinguish its own list from a
+foreign one after restart. A foreign list blocks WMCS changes and steering.
+Full wpad is required on both APs; missing platform methods fail closed. See
+[neighbor sync](../../docs/protocol/NEIGHBOR_SYNC_V0.md) for its limits.
+
+The separate `force_after_timeout` option permits one hostapd disassociation
+only after an unanswered BTM, a further 10-second delay, a still-authorized
+weak client at or below `force_trigger_dbm` (bounded to -95..-75 dBm), and an
+unchanged sole same-SSID neighbor. It gives the source a 5-second ban and
+applies a 5-minute per-station cooldown, including failed requests. It does
+not deauthenticate, does not act on an explicit BTM rejection or acceptance,
+and cannot guarantee a roam; it may interrupt service. Same SSID in the local
+Neighbor Report is not cryptographic proof of identical security or reachability.
+Only enable this advanced mode after verifying the administrator-owned neighbor
+configuration on both APs. A BTM acceptance is telemetry, not proof that the
+client completed a roam.
 
 Installation is inert by default. OpenWrt may create the normal init symlinks,
 but `/etc/config/wmcs` sets both `enabled` and `mutation_enabled` to `0`, so the

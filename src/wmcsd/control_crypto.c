@@ -13,6 +13,8 @@ static const uint8_t request_domain[] = "WMCS-CONTROL-C2A-V0";
 static const uint8_t result_domain[] = "WMCS-CONTROL-A2C-V0";
 static const uint8_t release_request_domain[] = "WMCS-RELEASE-C2A-V0";
 static const uint8_t release_result_domain[] = "WMCS-RELEASE-A2C-V0";
+static const uint8_t nr_query_domain[] = "WMCS-NR-QUERY-TO-V0";
+static const uint8_t nr_reply_domain[] = "WMCS-NR-REPLY-TO-V0";
 
 _Static_assert(sizeof(request_domain) == sizeof(result_domain),
 	       "control domains must have one fixed size");
@@ -20,6 +22,10 @@ _Static_assert(sizeof(request_domain) == sizeof(release_request_domain),
 	       "release request domain must fit the control KDF input");
 _Static_assert(sizeof(request_domain) == sizeof(release_result_domain),
 	       "release result domain must fit the control KDF input");
+_Static_assert(sizeof(request_domain) == sizeof(nr_query_domain),
+	       "neighbor query domain must fit the control KDF input");
+_Static_assert(sizeof(request_domain) == sizeof(nr_reply_domain),
+	       "neighbor reply domain must fit the control KDF input");
 
 static int hex_value(char value)
 {
@@ -99,6 +105,12 @@ static int derive_key(
 	} else if (packet->type == WMCS_CONTROL_RELEASE_RESULT) {
 		domain = release_result_domain;
 		domain_size = sizeof(release_result_domain) - 1U;
+	} else if (packet->type == WMCS_CONTROL_NR_QUERY) {
+		domain = nr_query_domain;
+		domain_size = sizeof(nr_query_domain) - 1U;
+	} else if (packet->type == WMCS_CONTROL_NR_REPLY) {
+		domain = nr_reply_domain;
+		domain_size = sizeof(nr_reply_domain) - 1U;
 	} else {
 		return -EINVAL;
 	}

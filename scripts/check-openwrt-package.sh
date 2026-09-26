@@ -125,6 +125,10 @@ printf '%s\n' "$config" | grep -Eq "option[[:space:]]+mutation_enabled[[:space:]
 printf '%s\n' "$config" | grep -Eq "config[[:space:]]+roaming[[:space:]]+'policy'"
 printf '%s\n' "$config" | grep -Eq "option[[:space:]]+enabled[[:space:]]+'0'"
 printf '%s\n' "$config" | grep -Eq "option[[:space:]]+source_trigger_dbm[[:space:]]+'-68'"
+printf '%s\n' "$config" | grep -Eq "option[[:space:]]+improvement_margin_db[[:space:]]+'8'"
+printf '%s\n' "$config" | grep -Eq "option[[:space:]]+neighbor_sync_enabled[[:space:]]+'0'"
+grep -Fq -- '--neighbor-sync-enabled' "$wmcs_root/package/openwrt/files/wmcsd.init"
+grep -Fq -- '--roaming-improvement-margin-db' "$wmcs_root/package/openwrt/files/wmcsd.init"
 printf '%s\n' "$acl" | grep -q '"forget_orphan"'
 printf '%s\n' "$acl" | grep -q '"release_start"'
 

@@ -53,6 +53,8 @@ Returns:
 - daemon/API version, configured role, and uptime;
 - `state`, `observe_and_pair`, `transactional`, or `degraded`;
 - `mutation_enabled` and the effective `mutation_available` gate;
+- `neighbor_sync_enabled`, the separate opt-in for paired Neighbor Report
+  exchange and runtime hostapd 802.11k/v recovery;
 - `ubus_connected`, plus `degraded` and a bounded `degraded_reason` when the
   daemon is waiting for ubus or startup recovery;
 - discovery, pairing, and control activity plus pairing/control state and
@@ -88,14 +90,49 @@ pair is supported.
 ### `roaming_status {}`
 
 Returns aggregate local source-gate state only: `enabled`, `active`, `state`,
-`mode`, the configured `source_trigger_dbm`, client and Neighbor Report counts,
-sample/gate/request counters, the last observed source signal when available,
-and a bounded `last_reason`. Station addresses, candidate BSSIDs, credentials,
-and raw hostapd payloads are never returned. The current mode is
-`source_gate_advisory`: it can send one non-disruptive 802.11v suggestion after
-five consecutive weak samples and a minimum dwell, but it does not yet score a
-fresh target signal or consume a BSS Transition response. That limitation is
-intentional until the authenticated cross-node observation path exists.
+`mode`, the configured `source_trigger_dbm`, `improvement_margin_db`,
+`force_after_timeout`, and `force_trigger_dbm`, client
+and Neighbor Report counts, `neighbor_list_truncated`, sample/gate/request and
+802.11k measurement counters, `fallback_btm_sent`, `force_disconnects`,
+`force_failures`, fresh last source/target signal observations,
+`last_target_margin_db`, and `last_target_age_ms`, plus a bounded `last_reason`.
+Station addresses, candidate BSSIDs, credentials,
+and raw hostapd payloads are never returned. The experimental
+`source_gate_advisory` policy requires five consecutive weak-source samples
+and minimum dwell before sending one 802.11v suggestion. Measurements are
+requested serially and bounded when supported; because the hostapd request
+method does not return its measurement dialog token, a report is matched to
+the sole outstanding request by station, BSSID, operating class, and channel.
+A fresh report must show the configured signal-improvement margin. If no
+usable report arrives, one same-SSID, locally published Neighbor Report
+candidate may be suggested without claiming a measured target signal.
+Multiple unmeasured candidates, an explicitly measured weak target, a changed
+neighbor, or an oversized neighbor list fail closed. Local Neighbor Reports
+are not authenticated evidence of compatible security or reachable target APs.
+The station normally makes the final candidate choice. An accepted BTM
+response is not counted as a completed roam.
+When hostapd notifications are available, `btm_response_monitor_active`,
+`btm_responses`, `btm_accepted`, `btm_rejected`, `btm_response_timeouts`, and
+`last_btm_status_code` report responses matched by station address and dialog
+token. `beacon_measurement_pending`, `beacon_requests_sent`,
+`beacon_request_failures`, `beacon_reports_received`, and
+`beacon_report_timeouts` expose the bounded measurement path without exposing
+the raw per-station report.
+`force_after_timeout` is disabled by default. If enabled, an unanswered BTM
+may be followed by a 10-second wait and one hostapd disassociation only while
+the client remains authorized on the same source, the sole target is unchanged,
+and the source is at or below the separately configured, stricter signal
+threshold. Explicit BTM responses cancel it. A five-second source ban and
+five-minute per-station cooldown limit repeated actions; this can interrupt
+traffic and does not prove a successful roam. It is not a deauthentication.
+
+The opt-in `neighbor_sync_enabled`, `neighbor_sync_ready`,
+`neighbor_sync_state`, `authenticated_neighbor_count`, `neighbor_queries_sent`,
+`neighbor_replies_accepted`, and `neighbor_apply_failures` expose the separate
+authenticated AP-neighbor reconciliation. No peer BSSID or SSID is returned.
+When enabled, steering is gated on its ready state and an exact fresh-list
+match. See [neighbor sync](NEIGHBOR_SYNC_V0.md) for ownership and rollback
+semantics. This option does not enable `force_after_timeout`.
 
 ### `nodes {}`
 

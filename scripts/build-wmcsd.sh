@@ -75,6 +75,10 @@ mkdir -p "$out_dir"
 	"$root/src/wmcsd/operation_store.c" \
 	"$root/src/wmcsd/result_store.c" \
 	"$root/src/wmcsd/roaming.c" \
+	"$root/src/wmcsd/roaming_event.c" \
+	"$root/src/wmcsd/neighbor_sync.c" \
+	"$root/src/wmcsd/neighbor_sync_wire.c" \
+	"$root/src/wmcsd/neighbor_sync_store.c" \
 	"$root/src/wmcsd/wlan.c" \
 	-lubus -lubox -luci -lmbedcrypto \
 	-o "$out_dir/wmcsd"

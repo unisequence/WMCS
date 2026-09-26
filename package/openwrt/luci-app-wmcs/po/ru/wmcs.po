@@ -29,6 +29,129 @@ msgstr "Адрес"
 msgid "Advisory requests"
 msgstr "Рекомендательные запросы"
 
+msgid "BTM accepted"
+msgstr "BTM принят"
+
+msgid "BTM rejected"
+msgstr "BTM отклонён"
+
+msgid "BTM response monitoring"
+msgstr "Мониторинг ответов BTM"
+
+msgid "BTM response timeouts"
+msgstr "Истечения ожидания ответа BTM"
+
+msgid "BTM responses"
+msgstr "Ответы BTM"
+
+msgid "Beacon measurement pending"
+msgstr "Ожидается измерение маяка"
+
+msgid "Beacon report timeouts"
+msgstr "Истечения ожидания отчёта о маяке"
+
+msgid "Beacon reports"
+msgstr "Отчёты о маяках"
+
+msgid "Beacon request failures"
+msgstr "Ошибки запросов измерения"
+
+msgid "Beacon requests"
+msgstr "Запросы измерения маяков"
+
+msgid "802.11k report timed out"
+msgstr "Истекло время ожидания отчёта 802.11k"
+
+msgid "802.11k request failed"
+msgstr "Не удалось отправить запрос 802.11k"
+
+msgid "BTM recommendation sent"
+msgstr "Рекомендация BTM отправлена"
+
+msgid "BTM request failed"
+msgstr "Не удалось отправить запрос BTM"
+
+msgid "BTM response timed out"
+msgstr "Истекло время ожидания ответа BTM"
+
+msgid "Client accepted the BTM recommendation"
+msgstr "Клиент принял рекомендацию BTM"
+
+msgid "Client does not support Neighbor Reports"
+msgstr "Клиент не поддерживает Neighbor Report"
+
+msgid "Client does not support 802.11v BTM"
+msgstr "Клиент не поддерживает BTM 802.11v"
+
+msgid "Client does not support beacon measurements"
+msgstr "Клиент не поддерживает измерение маяков"
+
+msgid "Client rejected the BTM recommendation"
+msgstr "Клиент отклонил рекомендацию BTM"
+
+msgid "Client signal is unavailable"
+msgstr "Сигнал клиента недоступен"
+
+msgid "Confirming weak source signal"
+msgstr "Подтверждается слабый сигнал исходной точки"
+
+msgid "Could not read the client list"
+msgstr "Не удалось получить список клиентов"
+
+msgid "Could not read the Neighbor Report list"
+msgstr "Не удалось получить список Neighbor Report"
+
+msgid "Disabled by policy"
+msgstr "Отключено политикой"
+
+msgid "hostapd event subscription unavailable"
+msgstr "Подписка на события hostapd недоступна"
+
+msgid "hostapd unavailable"
+msgstr "hostapd недоступен"
+
+msgid "No configured neighbor candidates"
+msgstr "Нет настроенных точек-соседей"
+
+msgid "No usable 802.11k report"
+msgstr "Нет пригодного отчёта 802.11k"
+
+msgid "Recommendation limit reached for this association"
+msgstr "Достигнут лимит рекомендаций для этого подключения"
+
+msgid "Source signal is above the trigger"
+msgstr "Сигнал исходной точки выше порога"
+
+msgid "Target Neighbor Report changed"
+msgstr "Запись целевой точки в Neighbor Report изменилась"
+
+msgid "Target measurement is stale"
+msgstr "Измерение целевой точки устарело"
+
+msgid "Target signal is not sufficiently stronger"
+msgstr "Сигнал целевой точки недостаточно сильнее"
+
+msgid "Waiting before measuring targets again"
+msgstr "Ожидание перед повторным измерением целевых точек"
+
+msgid "Waiting for minimum association time"
+msgstr "Ожидание минимального времени подключения"
+
+msgid "Waiting for the BTM response"
+msgstr "Ожидается ответ BTM"
+
+msgid "Waiting for the measurement slot"
+msgstr "Ожидание очереди измерений"
+
+msgid "Waiting for an 802.11k report"
+msgstr "Ожидается отчёт 802.11k"
+
+msgid "Neighbor list exceeds the safety limit"
+msgstr "Список соседей превышает безопасный лимит"
+
+msgid "Starting"
+msgstr "Запуск"
+
 msgid "Agent"
 msgstr "Агент"
 
@@ -107,9 +230,6 @@ msgstr "Разрешить изменение конфигурации"
 msgid "Enabled by policy"
 msgstr "Разрешено политикой"
 
-msgid "Enables the source-gated 802.11v advisory path. It does not force disassociation."
-msgstr "Включает рекомендательный путь 802.11v с порогом исходной точки. Разрыв соединения не выполняется принудительно."
-
 msgid "Gate passes"
 msgstr "Прохождения порога"
 
@@ -137,17 +257,32 @@ msgstr "Оставляйте выключенным во время наблюд
 msgid "Last reason"
 msgstr "Последняя причина"
 
+msgid "Last BTM status code"
+msgstr "Последний код ответа BTM"
+
 msgid "Last seen"
 msgstr "Последний контакт"
 
 msgid "Last source signal"
 msgstr "Последний сигнал исходной точки"
 
+msgid "Last target signal"
+msgstr "Последний сигнал целевой точки"
+
 msgid "Local interface used for native controller and agent discovery."
 msgstr "Локальный интерфейс для нативного обнаружения контроллеров и агентов."
 
 msgid "Mode"
 msgstr "Режим"
+
+msgid "Measured target advantage"
+msgstr "Измеренное преимущество целевой точки"
+
+msgid "Minimum target advantage"
+msgstr "Минимальное преимущество целевой точки"
+
+msgid "Target measurement age"
+msgstr "Возраст измерения целевой точки"
 
 msgid "Mutation gate"
 msgstr "Разрешение на изменения"
@@ -163,6 +298,9 @@ msgstr "Нативный протокол"
 
 msgid "Neighbor reports"
 msgstr "Отчёты о соседях"
+
+msgid "Candidate list truncated"
+msgstr "Список кандидатов усечён"
 
 msgid "No"
 msgstr "Нет"
@@ -224,6 +362,9 @@ msgstr "Состояние освобождения"
 msgid "Request failures"
 msgstr "Неудачные запросы"
 
+msgid "Require the measured target signal to exceed the source by this many dB before suggesting a roam."
+msgstr "Рекомендация перехода отправляется, только если измеренный сигнал цели лучше исходного на указанное число дБ."
+
 msgid "Roaming"
 msgstr "Роуминг"
 
@@ -247,9 +388,6 @@ msgstr "Автономный"
 
 msgid "State"
 msgstr "Состояние"
-
-msgid "This policy is advisory only. The client remains in control of the final roam."
-msgstr "Эта политика только рекомендует переход; окончательное решение остаётся за клиентом."
 
 msgid "Transport"
 msgstr "Транспорт"
@@ -281,11 +419,77 @@ msgstr "Сверка синхронизации WLAN"
 msgid "WLAN sync state"
 msgstr "Состояние синхронизации WLAN"
 
+msgid "Synchronize paired AP neighbors"
+msgstr "Синхронизировать соседние сопряжённые точки"
+
+msgid "Opt in to encrypted Neighbor Report exchange and runtime 802.11k/v recovery after hostapd restarts. Requires full wpad on both APs. WMCS does not edit wireless UCI; foreign Neighbor Report lists block synchronization. This also operates while advisory steering is off."
+msgstr "Включает шифрованный обмен сведениями о соседних точках и восстановление 802.11k/v после перезапуска hostapd. На обеих точках нужен полный wpad. WMCS не меняет UCI беспроводной сети; чужой список соседей блокирует синхронизацию. Работает и при выключенных рекомендациях перехода."
+
+msgid "Paired neighbor sync"
+msgstr "Синхронизация сопряжённых точек"
+
+msgid "Neighbor sync ready"
+msgstr "Синхронизация соседей готова"
+
+msgid "Neighbor sync state"
+msgstr "Состояние синхронизации соседей"
+
+msgid "Authenticated neighbors"
+msgstr "Подтверждённые соседние точки"
+
+msgid "Authenticated neighbor sync is unavailable"
+msgstr "Синхронизация подтверждённых соседей недоступна"
+
+msgid "Neighbor list changed; steering paused"
+msgstr "Список соседей изменился; рекомендации перехода приостановлены"
+
+msgid "Another service owns the Neighbor Report list"
+msgstr "Списком соседних точек управляет другой сервис"
+
+msgid "Waiting for a fresh paired AP report"
+msgstr "Ожидание свежих данных от сопряжённой точки"
+
+msgid "WMCS-owned AP is unavailable"
+msgstr "Точка доступа под управлением WMCS недоступна"
+
+msgid "Neighbor sync network socket is unavailable"
+msgstr "Сетевой сокет синхронизации соседей недоступен"
+
+msgid "Paired identity is unavailable"
+msgstr "Сопряжённый узел не идентифицирован"
+
+msgid "Protected neighbor state is invalid"
+msgstr "Защищённое состояние соседей повреждено"
+
+msgid "Neighbor list update failed"
+msgstr "Не удалось обновить список соседей"
+
+msgid "Neighbor list rollback failed"
+msgstr "Не удалось восстановить прежний список соседей"
+
+msgid "Neighbor list changed during rollback"
+msgstr "Список соседей изменился во время восстановления"
+
+msgid "Two peers claim the same AP address"
+msgstr "Два узла заявляют один и тот же адрес точки доступа"
+
+msgid "Could not query paired APs"
+msgstr "Не удалось запросить сопряжённые точки"
+
+msgid "Ready"
+msgstr "Готово"
+
 msgid "WMCS"
 msgstr "WMCS"
 
 msgid "Weak source signal threshold"
 msgstr "Порог слабого исходного сигнала"
+
+msgid "dB"
+msgstr "дБ"
+
+msgid "ms"
+msgstr "мс"
 
 msgid "Wireless mesh coordination"
 msgstr "Координация беспроводной сети"
@@ -307,3 +511,63 @@ msgstr "ubus"
 
 msgid "Grant access to the WMCS configuration page"
 msgstr "Предоставляет доступ к странице конфигурации WMCS"
+
+msgid "Advanced: after an unanswered BTM and a further 10 seconds, disassociate only if the source is still very weak and the sole same-SSID neighbor is unchanged. This may interrupt traffic; it cannot guarantee a successful roam. One attempt per association, five-minute cooldown."
+msgstr "Дополнительно: если клиент не ответил на BTM, ещё через 10 секунд разорвать соединение только при очень слабом сигнале исходной точки и неизменной единственной соседней точке с тем же SSID. Возможен перерыв трафика; успешный переход не гарантирован. Одна попытка на подключение, пауза пять минут."
+
+msgid "BTM sent using the sole configured neighbor; no target signal measurement"
+msgstr "BTM отправлен для единственного настроенного соседа без измерения его сигнала"
+
+msgid "BTM sent without target measurement"
+msgstr "BTM без измерения сигнала цели"
+
+msgid "Could not verify the source AP identity"
+msgstr "Не удалось проверить идентификатор исходной точки"
+
+msgid "Enables source-gated 802.11v recommendations. Forced disassociation requires a separate switch."
+msgstr "Включает рекомендации 802.11v при слабом сигнале исходной точки. Принудительное отключение включается отдельно."
+
+msgid "Force disassociation after ignored BTM"
+msgstr "Принудительно отключать после игнорирования BTM"
+
+msgid "Forced disassociation enabled"
+msgstr "Принудительное отключение включено"
+
+msgid "Forced disassociation sent"
+msgstr "Принудительное отключение отправлено"
+
+msgid "Forced disassociation failed"
+msgstr "Не удалось принудительно отключить клиента"
+
+msgid "Forced disassociations"
+msgstr "Принудительные отключения"
+
+msgid "Forced-disassociation failures"
+msgstr "Ошибки принудительного отключения"
+
+msgid "Forced-disassociation signal threshold"
+msgstr "Порог сигнала для принудительного отключения"
+
+msgid "Forced-disassociation threshold"
+msgstr "Порог принудительного отключения"
+
+msgid "Forced-disconnect cooldown is active"
+msgstr "Действует пауза после принудительного отключения"
+
+msgid "Forced-disconnect safety conditions are not met"
+msgstr "Условия безопасности для принудительного отключения не выполнены"
+
+msgid "Forced-disconnect safety table is full"
+msgstr "Таблица ограничений принудительного отключения заполнена"
+
+msgid "Target measurement is invalid"
+msgstr "Измерение целевой точки некорректно"
+
+msgid "The source must be at or below this value and the advisory threshold. Applies only after an unanswered BTM."
+msgstr "Сигнал исходной точки должен быть не выше этого и рекомендательного порога. Применяется только при отсутствии ответа на BTM."
+
+msgid "Waiting before optional forced disassociation"
+msgstr "Ожидание перед возможным принудительным отключением"
+
+msgid "WMCS normally suggests a roam with 802.11v. With one same-SSID configured neighbor, it may suggest that neighbor even without an 802.11k Beacon Report; a measured weak target is still rejected. Forced disassociation is a separate, disabled-by-default option."
+msgstr "Обычно WMCS предлагает переход через 802.11v. Если настроен один сосед с тем же SSID, предложение возможно и без отчёта 802.11k; измеренная слабая цель по-прежнему отвергается. Принудительное отключение — отдельная опция, по умолчанию выключенная."

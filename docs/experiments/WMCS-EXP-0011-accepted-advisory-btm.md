@@ -106,10 +106,14 @@ durable generation/state tracking and tests for subscriber teardown.
 
 ## Next gates
 
-1. Move the response listener into the WMCS daemon and remove the ad-hoc ucode
-   lifetime hazard.
-2. Add a target-observation path that can satisfy the production improvement
-   margin without operator knowledge.
+1. Build and validate the daemon-owned hostapd subscriber, including teardown,
+   hostapd restart, and ubus reconnect behavior. The subscription and bounded
+   response handling now live in `wmcsd` source; this is not yet build or
+   hardware evidence.
+2. Repeat the 802.11k request with the daemon enabled and check whether the
+   POCO returns a Beacon Report. The prior active-request probe received no
+   report; the new target-scoring path must continue to fail closed in that
+   case.
 3. Repeat the 100 ms accepted-transition continuity capture first completed in
    [EXP-0016](WMCS-EXP-0016-assisted-reverse-continuity.md).
 4. Repeat at least 20 transitions in each direction, including rejection,

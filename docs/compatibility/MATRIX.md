@@ -4,15 +4,19 @@ Status values: `planned`, `observed`, `partial`, `supported`, `regressed`, or
 `unsupported`. Only `supported` is a compatibility claim, and it requires linked
 repeatable evidence.
 
+The [r6 package build matrix](BUILD_MATRIX.md) records four verified target
+artifacts. A successful package build does not establish device runtime or move
+the generic target rows below to `supported`.
+
 ## Controllers
 
 | Platform | Version | Target | Role | Status | Evidence | Notes |
 |---|---|---|---|---|---|---|
-| OpenWrt | 24.10.x | MediaTek Filogic / aarch64 | WMCS controller | planned | — | Initial toolchain target |
-| OpenWrt | 24.10.x | MT7621 / mipsel_24kc | WMCS controller | planned | — | Subject to footprint spike |
-| OpenWrt | 25.12.x | MediaTek Filogic / aarch64 | WMCS controller | planned | — | Initial APK target |
-| OpenWrt | 25.12.x | MT7621 / mipsel_24kc | WMCS controller | planned | — | Subject to footprint spike |
-| OpenWrt | SNAPSHOT `r0+36056-d019f0b2e3` | Globitel BT-RB300 / MediaTek Filogic | Native WMCS controller pilot | observed | [EXP-0001](../experiments/WMCS-EXP-0001-globitel-read-only-runtime.md), [EXP-0002](../experiments/WMCS-EXP-0002-globitel-package-install.md), [EXP-0003](../experiments/WMCS-EXP-0003-two-router-bounded-discovery.md), [EXP-0004](../experiments/WMCS-EXP-0004-two-router-authenticated-pairing.md), [EXP-0005](../experiments/WMCS-EXP-0005-two-router-one-wlan-sync.md) | Discovery, paired control, transactional one-WLAN sync and real reboot persistence observed; not a supported release |
+| OpenWrt | 24.10.x | MediaTek Filogic / aarch64 | WMCS controller | planned | [r6 build](BUILD_MATRIX.md) | Local 24.10 Filogic IPK built; no 24.10 controller runtime claim |
+| OpenWrt | 24.10.x | MT7621 / mipsel_24kc | WMCS controller | planned | [r6 build](BUILD_MATRIX.md) | Isolated 24.10.8 SDK IPK built; no MIPS hardware runtime claim |
+| OpenWrt | 25.12.x | MediaTek Filogic / aarch64 | WMCS controller | planned | [r6 build](BUILD_MATRIX.md) | Exact 25.12.5 SDK APK built; no 25.12 controller runtime claim |
+| OpenWrt | 25.12.x | MT7621 / mipsel_24kc | WMCS controller | planned | [r6 build](BUILD_MATRIX.md) | Isolated 25.12.5 SDK APK built; no MIPS hardware runtime claim |
+| OpenWrt | SNAPSHOT `r0+36056-d019f0b2e3` | Globitel BT-RB300 / MediaTek Filogic | Native WMCS controller pilot | observed | [EXP-0001](../experiments/WMCS-EXP-0001-globitel-read-only-runtime.md), [EXP-0002](../experiments/WMCS-EXP-0002-globitel-package-install.md), [EXP-0003](../experiments/WMCS-EXP-0003-two-router-bounded-discovery.md), [EXP-0004](../experiments/WMCS-EXP-0004-two-router-authenticated-pairing.md), [EXP-0005](../experiments/WMCS-EXP-0005-two-router-one-wlan-sync.md), [EXP-0021](../experiments/WMCS-EXP-0021-ten-cycle-lifecycle-soak.md), [EXP-0022](../experiments/WMCS-EXP-0022-process-restart-reconciliation.md), [EXP-0024](../experiments/WMCS-EXP-0024-recovery-fault-matrix.md) | Discovery, paired control, one-WLAN sync, real reboot persistence, r3/r4 normal lifecycle, and r6 controller service restart observed on the named pair; not a supported release |
 
 ## Agents
 
@@ -21,14 +25,33 @@ bounded observations against named hardware, firmware, role, and evidence.
 
 | Platform | Model / target | Firmware | Backhaul | Capability | Status | Evidence |
 |---|---|---|---|---|---|---|
-| OpenWrt | MediaTek Filogic / aarch64 | 24.10.x or 25.12.x | Ethernet | Native WMCS agent MVP | planned | — |
-| OpenWrt | Cudy TR3000 v1 / MediaTek Filogic | 25.12.5 `r33051-f5dae5ece4` | Ethernet | Native WMCS one-WLAN agent pilot | observed | [EXP-0003](../experiments/WMCS-EXP-0003-two-router-bounded-discovery.md), [EXP-0004](../experiments/WMCS-EXP-0004-two-router-authenticated-pairing.md), [EXP-0005](../experiments/WMCS-EXP-0005-two-router-one-wlan-sync.md), [EXP-0019](../experiments/WMCS-EXP-0019-exact-cudy-package-live-sync.md) |
-| OpenWrt | MT7621 / mipsel_24kc | 24.10.x or 25.12.x | Ethernet | Native WMCS agent MVP | planned | — |
+| OpenWrt | MediaTek Filogic / aarch64 | 24.10.x or 25.12.x | Ethernet | Native WMCS agent MVP | planned | [r6 builds](BUILD_MATRIX.md); exact Cudy observation below does not establish generic target support |
+| OpenWrt | Cudy TR3000 v1 / MediaTek Filogic | 25.12.5 `r33051-f5dae5ece4` | Ethernet | Native WMCS one-WLAN agent pilot | observed | [EXP-0003](../experiments/WMCS-EXP-0003-two-router-bounded-discovery.md), [EXP-0004](../experiments/WMCS-EXP-0004-two-router-authenticated-pairing.md), [EXP-0005](../experiments/WMCS-EXP-0005-two-router-one-wlan-sync.md), [EXP-0019](../experiments/WMCS-EXP-0019-exact-cudy-package-live-sync.md), [EXP-0020](../experiments/WMCS-EXP-0020-release-forget-repair-cycle.md), [EXP-0021](../experiments/WMCS-EXP-0021-ten-cycle-lifecycle-soak.md), [EXP-0022](../experiments/WMCS-EXP-0022-process-restart-reconciliation.md), [EXP-0024](../experiments/WMCS-EXP-0024-recovery-fault-matrix.md) |
+| OpenWrt | MT7621 / mipsel_24kc | 24.10.x or 25.12.x | Ethernet | Native WMCS agent MVP | planned | [r6 builds](BUILD_MATRIX.md); no MIPS hardware runtime evidence |
+
+The Cudy normal lifecycle and restart/reconciliation results used the exact
+25.12.5 r4 agent package. EXP-0024 observes the r6 pair's final healthy state
+after a controller service restart; it skipped the r6 agent restart after two
+transient parallel SSH resets. These are bounded observations, not a broader
+agent or release claim.
 
 Keenetic MWS interoperability is not part of the first MVP. It will receive
 separate controller/member rows only when its adapter research begins.
 
 ## Capability status
+
+Current non-roaming gate (2026-09-26): [EXP-0021](../experiments/WMCS-EXP-0021-ten-cycle-lifecycle-soak.md)
+passed ten consecutive normal release/forget/re-pair/repair cycles on the
+Globitel/Cudy pair; [EXP-0022](../experiments/WMCS-EXP-0022-process-restart-reconciliation.md)
+passed daemon restart and explicit reconciliation on the r3 controller/r4
+agent pair. In [EXP-0024](../experiments/WMCS-EXP-0024-recovery-fault-matrix.md), host
+atomic-write/store checks passed and an r6 controller service restart ended
+with both routers paired, idle, and unchanged UCI exports; two initial parallel
+SSH reads reset, so the r6 agent restart was skipped. A read-only 24-hour
+monitor started at 2026-09-26T09:37:58Z and its first sample was healthy; the
+24-hour result is pending. Physical power loss, actual router flash ENOSPC or
+read-only behavior, and mid-UCI interruption/rollback remain untested. The
+Cudy has no UART and controlled power interruption is unavailable.
 
 | Capability | Status | Release gate |
 |---|---|---|
@@ -42,8 +65,9 @@ separate controller/member rows only when its adapter research begins.
 | Multiple members | planned | Post-MVP |
 | VLAN and additional segments | planned | Post-MVP |
 | Wireless backhaul | planned | Post-MVP |
-| 802.11k/v roaming assistance | partial | [EXP-0007](../experiments/WMCS-EXP-0007-hostapd-roaming-capabilities.md) shows the basic-wpad boundary; [EXP-0008](../experiments/WMCS-EXP-0008-full-wpad-package-gate.md) proves full-wpad BTM on both nodes and exact live rollback on Globitel; [EXP-0009](../experiments/WMCS-EXP-0009-runtime-kv-neighbor-pilot.md) observes runtime k/v and reciprocal Neighbor Reports; [EXP-0010](../experiments/WMCS-EXP-0010-client-kv-steering-pilot.md) records measurement limits, fail-closed gates, stale-source handling, and a repaired candidate; [EXP-0011](../experiments/WMCS-EXP-0011-accepted-advisory-btm.md) observes one status-0 advisory transition; [EXP-0012](../experiments/WMCS-EXP-0012-passive-roundtrip-continuity.md) demonstrates client stickiness; [EXP-0013](../experiments/WMCS-EXP-0013-strict-source-gate-calibration.md) shows a strict source-only gate failing closed; [EXP-0014](../experiments/WMCS-EXP-0014-natural-handoff-continuity.md) captures one natural non-FT handoff with one lost 100 ms probe; [EXP-0015](../experiments/WMCS-EXP-0015-reverse-passive-stickiness.md) observes reverse-direction stickiness and zero movement-path loss; [EXP-0016](../experiments/WMCS-EXP-0016-assisted-reverse-continuity.md) joins one status-0 advisory request, intended-target transition, and one lost 100 ms probe; [EXP-0023](../experiments/WMCS-EXP-0023-final-roaming-pass.md) records a clean 0%-loss walk with no natural handoff at RSSI down to -76 dBm; owned persistence, daemon integration, assisted-BTM decision, and repetition remain required |
+| 802.11k/v roaming assistance | partial | [EXP-0007](../experiments/WMCS-EXP-0007-hostapd-roaming-capabilities.md) through [EXP-0029](../experiments/WMCS-EXP-0029-r7-automatic-roundtrip-and-r8-event-fix.md) cover full-wpad, manual and automatic BTM, measurement limits, and the r8 event-width fix. [EXP-0030](../experiments/WMCS-EXP-0030-r9-paired-neighbor-recovery.md) verifies opt-in encrypted reciprocal Neighbor Reports, bounded ownership-safe runtime recovery, daemon restart, peer expiry and rejoin on the named pair. [EXP-0031](../experiments/WMCS-EXP-0031-r10-raw-neighbor-guard.md) records the r10 raw-list guard and package rollout. [EXP-0032](../experiments/WMCS-EXP-0032-btrb-radio1-bss-restart.md) verifies BT's 5 GHz BSS recreation and reciprocal report recovery. Global hostapd process restart, Cudy AP restart, live r10 Cudy BTM response, and repeated client quality trials remain required. |
 | 802.11r | planned | Separate opt-in evaluation |
+| Automatic two-direction advisory BTM on BT-RB300/Cudy | observed | [EXP-0029](../experiments/WMCS-EXP-0029-r7-automatic-roundtrip-and-r8-event-fix.md) records one r7 measured BTM transition each way. Hostapd accepted both, but r7 WMCS missed Cudy's INT8 response and counted a timeout. The r8 parser correction is still not live-response tested. [EXP-0030](../experiments/WMCS-EXP-0030-r9-paired-neighbor-recovery.md) and [EXP-0031](../experiments/WMCS-EXP-0031-r10-raw-neighbor-guard.md) add paired neighbor recovery and an exact raw-list guard while policies remain off; no repeatable or supported roaming claim. |
 | Coordinated updates | planned | Only after signed release path and rollback |
 
 ## Evidence rule
